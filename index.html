@@ -107,7 +107,7 @@
 
     <div class="alan">
       <label for="dogum">Doğum Tarihin</label>
-      <input type="text" id="dogum" placeholder="Örn: Gün.Ay.Yıl">
+      <input type="text" id="dogum" placeholder="GG/AA/YYYY" maxlength="10" inputmode="numeric">
     </div>
 
     <button onclick="bilgileriGoster()">Kaydet ve Göster</button>
@@ -120,13 +120,39 @@
   </div>
 
   <script>
+    const dogumInput = document.getElementById('dogum');
+
+    // Otomatik slash ekleme mantığı
+    dogumInput.addEventListener('input', function(e) {
+      let deger = e.target.value.replace(/\D/g, ''); // Sadece rakamları al
+      if (deger.length > 8) deger = deger.substring(0, 8);
+
+      let bicimliDeger = '';
+      if (deger.length > 0) {
+        bicimliDeger = deger.substring(0, 2);
+      }
+      if (deger.length >= 3) {
+        bicimliDeger += '/' + deger.substring(2, 4);
+      }
+      if (deger.length >= 5) {
+        bicimliDeger += '/' + deger.substring(4, 8);
+      }
+
+      e.target.value = bicimliDeger;
+    });
+
     function bilgileriGoster() {
       const girilenAd = document.getElementById('ad').value;
       const girilenSoyad = document.getElementById('soyad').value;
       const girilenDogum = document.getElementById('dogum').value;
 
       if (!girilenAd || !girilenSoyad || !girilenDogum) {
-        alert("Lütfen tüm kutuları doldur!");
+        alert("Lütfen tüm kutuları eksiksiz doldur!");
+        return;
+      }
+
+      if (girilenDogum.length < 10) {
+        alert("Lütfen doğum tarihini tam gir (GG/AA/YYYY)!");
         return;
       }
 

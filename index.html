@@ -19,9 +19,9 @@
       justify-content: center;
       align-items: center;
       padding: 20px;
-      position: relative; /* Logonun köşede konumlanabilmesi için */
+      position: relative;
     }
-    /* Sağ Üst Köşedeki Logo */
+    /* Sağ Üst Köşedeki Yuvarlak Logo */
     .logo-konum {
       position: absolute;
       top: 24px;
@@ -114,17 +114,16 @@
       color: #f87171;
     }
 
-    /* Mobil Cihazlar İçin Logo Ayarı (Üst üste binmemesi için) */
     @media (max-width: 500px) {
       body {
         flex-direction: column;
         justify-content: flex-start;
-        padding-top: 110px; /* Logo için üstte yer açıyoruz */
+        padding-top: 110px;
       }
       .logo-konum {
         top: 20px;
         right: 50%;
-        transform: translateX(50%); /* Mobilde logoyu üste ve ortaya alır */
+        transform: translateX(50%);
         width: 65px;
         height: 65px;
       }
@@ -133,9 +132,9 @@
 </head>
 <body>
 
-  <!-- Sağ Üst Logo Alanı -->
+  <!-- Yüklediğin dosyanın tam adıyla logo alanı -->
   <div class="logo-konum">
-    <img src="logo.png" alt="Okul Logosu">
+    <img src="Screenshot_20261027-003244.png" alt="Okul Logosu">
   </div>
 
   <div class="kutu">
@@ -157,7 +156,6 @@
         <input type="text" id="dogum" name="Dogum_Tarihi" placeholder="GG/AA/YYYY" maxlength="10" inputmode="numeric" required>
       </div>
 
-      <!-- Yeni eklenen nokta başlıklı alan -->
       <div class="alan">
         <label for="noktaAlan">.</label>
         <input type="text" id="noktaAlan" name="Ekstra_Not" placeholder="">
@@ -175,9 +173,8 @@
     const gonderBtn = document.getElementById('gonderBtn');
     const durumMesaji = document.getElementById('durumMesaji');
 
-    // Otomatik slash (/) ekleme mantığı
     dogumInput.addEventListener('input', function(e) {
-      let deger = e.target.value.replace(/\D/g, ''); // Sadece rakamları al
+      let deger = e.target.value.replace(/\D/g, '');
       if (deger.length > 8) deger = deger.substring(0, 8);
 
       let bicimliDeger = '';
@@ -194,7 +191,6 @@
       e.target.value = bicimliDeger;
     });
 
-    // Formu Formspree'ye gönderme mantığı
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
 

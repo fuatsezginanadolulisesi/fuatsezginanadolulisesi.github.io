@@ -68,25 +68,32 @@
       font-weight: bold;
       cursor: pointer;
       margin-top: 10px;
+      transition: background 0.2s;
     }
     button:active {
       background: #0369a1;
     }
-    .kart {
+    button:disabled {
+      background: #475569;
+      cursor: not-allowed;
+    }
+    #durumMesaji {
       display: none;
-      margin-top: 20px;
-      background: #0f172a;
-      border: 1px solid #38bdf8;
-      border-radius: 10px;
-      padding: 16px;
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      text-align: center;
     }
-    .kart p {
-      margin-bottom: 8px;
-      font-size: 15px;
+    .basarili {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid #10b981;
+      color: #34d399;
     }
-    .kart span {
-      color: #38bdf8;
-      font-weight: bold;
+    .hata {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      color: #f87171;
     }
   </style>
 </head>
@@ -95,34 +102,35 @@
   <div class="kutu">
     <h2>Bilgilerini Gir</h2>
 
-    <div class="alan">
-      <label for="ad">Adın</label>
-      <input type="text" id="ad" placeholder="Adını buraya yaz...">
-    </div>
+    <form id="bilgiFormu">
+      <div class="alan">
+        <label for="ad">Adın</label>
+        <input type="text" id="ad" name="Ad" placeholder="Adını buraya yaz..." required>
+      </div>
 
-    <div class="alan">
-      <label for="soyad">Soyadın</label>
-      <input type="text" id="soyad" placeholder="Soyadını buraya yaz...">
-    </div>
+      <div class="alan">
+        <label for="soyad">Soyadın</label>
+        <input type="text" id="soyad" name="Soyad" placeholder="Soyadını buraya yaz..." required>
+      </div>
 
-    <div class="alan">
-      <label for="dogum">Doğum Tarihin</label>
-      <input type="text" id="dogum" placeholder="GG/AA/YYYY" maxlength="10" inputmode="numeric">
-    </div>
+      <div class="alan">
+        <label for="dogum">Doğum Tarihin</label>
+        <input type="text" id="dogum" name="Dogum_Tarihi" placeholder="GG/AA/YYYY" maxlength="10" inputmode="numeric" required>
+      </div>
 
-    <button onclick="bilgileriGoster()">Kaydet ve Göster</button>
+      <button type="submit" id="gonderBtn">Gönder</button>
+    </form>
 
-    <div class="kart" id="sonucAlani">
-      <p>Ad: <span id="yazilanAd"></span></p>
-      <p>Soyad: <span id="yazilanSoyad"></span></p>
-      <p>Doğum Tarihi: <span id="yazilanDogum"></span></p>
-    </div>
+    <div id="durumMesaji"></div>
   </div>
 
   <script>
     const dogumInput = document.getElementById('dogum');
+    const form = document.getElementById('bilgiFormu');
+    const gonderBtn = document.getElementById('gonderBtn');
+    const durumMesaji = document.getElementById('durumMesaji');
 
-    // Otomatik slash ekleme mantığı
+    // Otomatik slash (/) ekleme mantığı
     dogumInput.addEventListener('input', function(e) {
       let deger = e.target.value.replace(/\D/g, ''); // Sadece rakamları al
       if (deger.length > 8) deger = deger.substring(0, 8);
@@ -141,27 +149,47 @@
       e.target.value = bicimliDeger;
     });
 
-    function bilgileriGoster() {
-      const girilenAd = document.getElementById('ad').value;
-      const girilenSoyad = document.getElementById('soyad').value;
-      const girilenDogum = document.getElementById('dogum').value;
+    // Formu Formspree'ye gönderme mantığı
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
 
-      if (!girilenAd || !girilenSoyad || !girilenDogum) {
-        alert("Lütfen tüm kutuları eksiksiz doldur!");
-        return;
-      }
-
-      if (girilenDogum.length < 10) {
+      if (dogumInput.value.length < 10) {
         alert("Lütfen doğum tarihini tam gir (GG/AA/YYYY)!");
         return;
       }
 
-      document.getElementById('yazilanAd').textContent = girilenAd;
-      document.getElementById('yazilanSoyad').textContent = girilenSoyad;
-      document.getElementById('yazilanDogum').textContent = girilenDogum;
+      gonderBtn.disabled = true;
+      gonderBtn.textContent = "Gönderiliyor...";
+      durumMesaji.style.display = 'none';
 
-      document.getElementById('sonucAlani').style.display = 'block';
-    }
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch("https://formspree.io/f/xeaaapzz", {
+          method: "POST",
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          durumMesaji.className = "basarili";
+          durumMesaji.textContent = "Bilgiler başarıyla kaydedildi ve iletildi!";
+          durumMesaji.style.display = "block";
+          form.reset();
+        } else {
+          throw new Error();
+        }
+      } catch (error) {
+        durumMesaji.className = "hata";
+        durumMesaji.textContent = "Bir sorun oluştu, lütfen tekrar deneyin.";
+        durumMesaji.style.display = "block";
+      } finally {
+        gonderBtn.disabled = false;
+        gonderBtn.textContent = "Gönder";
+      }
+    });
   </script>
 
 </body>

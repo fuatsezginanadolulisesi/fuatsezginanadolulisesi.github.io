@@ -1,1 +1,1 @@
-Prof Dr Fuat Sezgin Anadolu Lisesi.github.io
+Prof Dr Fuat Sezgin Anadolu Lisesi.io
